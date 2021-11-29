@@ -1,0 +1,4 @@
+name = "PRNG"
+uuid = "1fdd0193-27b2-4984-a024-79496cfd6e51"
+authors = ["theobori <theo1.bori@epitech.eu>"]
+version = "0.1.0"
