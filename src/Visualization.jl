@@ -2,45 +2,75 @@ module Visualization
 
 using Luxor
 
-export draw_graph
+export graph, draw_graph
 
-function graph(data::Vector, w::Int, h::Int)
-    margin = 0.1 * h
-    @assert w > margin && h > margin
+function center(h, length, top, margin)
+    bottom = (h - length) / 2
+    (bottom + length + margin, bottom)
+end
 
+const styles = Dict(
+    :default => (h, length, top, margin) -> (h, top),
+    :center => center,
+    :inverse => (h, length, top, margin) -> 
+    ((top + margin > h) ? top : top + margin, margin)
+)
+
+function graph(data::Vector;
+    w = 800,
+    h = 200,
+    margin = 0.1,
+    offset = 3,
+    style = :default
+    )
+    @assert margin >= 0 && margin < 0.35
+    @assert w > 100 && h > 100
+    @assert offset >= 0 && offset < 10
+    @assert any([style == s for (s, _) in styles])
+    
+    margin *= h
     line_lenght = h - margin
-    x = margin
-    offset = 3
 
+    # Apply the margin
     translate(margin, -margin)
+    x = margin
+
     for value in data
 
         if (x > w - margin)
-            break
+            return
         end
         
+        # Compute the 2 points to draw the line
         top = h - (line_lenght * value)
-        line(Point(0, h), Point(0, (top + margin > h) ? top : top + margin), :stroke)
+        bottom, top = styles[style](h, line_lenght * value, top, margin)
+        top = (top + margin > h) ? top : top + margin
+
+        # Draw the line
+        line(Point(0, bottom), Point(0, top), :stroke)
+        
+        # Moving the workspace to the right
         translate(offset, 0)
         x += offset
     end
 end
 
-function generate_data(values::Vector, key=[])
-    ret = Dict()
-
-    key = (length(key) == 0) ? [i for i in 0:length(values)] : key
+function format_data(values::Vector)
     _max, _ = findmax(values)
-    values = map(((x) -> (_max > 1) ? (x / _max) : x), values)
-    values
+    map(((x) -> (_max > 1) ? (x / _max) : x), values)
 end
 
-function draw_graph(w::Int, h::Int, filename, data::Vector)
+function draw_graph(w::Int, h::Int, data::Vector;
+    filename = "img/tmp.png",
+    gw = w,
+    gh = h
+    )
+    @assert gw <= w && gh <= h
+
     Drawing(w, h, filename)
     background("white")
     sethue("gray20")
-    data = generate_data(data)
-    graph(data, w, h)
+    graph(format_data(data), w=gw, h=gh, style=:inverse)
     finish()
 end
 

@@ -7,7 +7,7 @@ const SEED = 312
 const GC = 100
 const _pwd = pwd()
 
-cd("test")
+cd("./test/")
 @testset "Mersenne Twister" begin
 
     m = PRNG.MT19937.MT()
@@ -20,7 +20,7 @@ cd("test")
             @test value_found == string(PRNG.MT19937.extract(m))
         end
     end
-    
+
 end
 cd(_pwd)
 
@@ -33,16 +33,23 @@ cd(_pwd)
     for i in 1:GC
         m = PRNG.MT19937.MT()
         PRNG.MT19937.seed(m, i)
-        store = [PRNG.MT19937.extract(m) for _ in 1:250]
-        draw_graph(800, 200, "img/MT19937_" * string(i) * ext, store)
+        data = [PRNG.MT19937.extract(m) for _ in 1:300]
+        draw_graph(800, 200, data, filename="img/MT19937_" * string(i) * ext)
     end
 
     @info "[Noise] Generating a graph with noise values"
-    noises = [noise(i) for i in range(1, 10, length=300)]
-    draw_graph(800, 200, "img/noise" * ext, noises)
+
+    data = [noise(i) for i in range(1, 20, length=1000)]
+    draw_graph(2000, 300, data, filename="img/noise" * ext)
+
 
     @info "[Noise 2] Generating a graph with noise values"
-    noises = [noise(i) for i in range(4, 6, length=300)]
-    draw_graph(800, 200, "img/noise2" * ext, noises)
+
+    data = [noise(i) for i in range(0, 6, length=300)]
+    Drawing(800, 200, "img/noise2" * ext)
+    background("black")
+    sethue("white")
+    graph(data, style=:inverse)
+    finish()
 
 end
