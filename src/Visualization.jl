@@ -4,15 +4,16 @@ using Luxor
 
 export draw_graph
 
-function graph(data::Dict, w::Int, h::Int, margin::Int=20)
+function graph(data::Vector, w::Int, h::Int)
+    margin = 0.1 * h
     @assert w > margin && h > margin
 
     line_lenght = h - margin
     x = margin
-    offset = 5
+    offset = 3
 
     translate(margin, -margin)
-    for (key, value) in data
+    for value in data
 
         if (x > w - margin)
             break
@@ -30,17 +31,16 @@ function generate_data(values::Vector, key=[])
 
     key = (length(key) == 0) ? [i for i in 0:length(values)] : key
     _max, _ = findmax(values)
-    for (k, v) in collect(zip(key, values))
-        ret[k] = v / _max
-    end
-    ret
+    values = map(((x) -> (_max > 1) ? (x / _max) : x), values)
+    values
 end
 
 function draw_graph(w::Int, h::Int, filename, data::Vector)
     Drawing(w, h, filename)
     background("white")
     sethue("gray20")
-    graph(generate_data(data), w, h)
+    data = generate_data(data)
+    graph(data, w, h)
     finish()
 end
 

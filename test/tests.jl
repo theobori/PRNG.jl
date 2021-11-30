@@ -1,5 +1,8 @@
 using .PRNG, .Visualization, Test
 
+# For noise()
+using Luxor
+
 const SEED = 312
 const GC = 100
 const _pwd = pwd()
@@ -23,7 +26,7 @@ cd(_pwd)
 
 @testset "Data visualization" begin
 
-    @info "Generating $GC graphs for the seeds 1 -> $GC"
+    @info "[Mersenne Twister] Generating $GC graphs for the seeds 1 -> $GC"
 
     ext = ".png"
 
@@ -33,4 +36,13 @@ cd(_pwd)
         store = [PRNG.MT19937.extract(m) for _ in 1:250]
         draw_graph(800, 200, "img/MT19937_" * string(i) * ext, store)
     end
+
+    @info "[Noise] Generating a graph with noise values"
+    noises = [noise(i) for i in range(1, 10, length=300)]
+    draw_graph(800, 200, "img/noise" * ext, noises)
+
+    @info "[Noise 2] Generating a graph with noise values"
+    noises = [noise(i) for i in range(4, 6, length=300)]
+    draw_graph(800, 200, "img/noise2" * ext, noises)
+
 end
