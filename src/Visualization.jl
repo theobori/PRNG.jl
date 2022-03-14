@@ -4,6 +4,10 @@ using Luxor
 
 export graph, draw_graph
 
+macro abs(n)
+    return :($n > 0 ? $n : -$n)
+end
+
 function center(h, length, top, margin)
     bottom = (h - length) / 2
     (bottom + length + margin, bottom)
@@ -25,9 +29,9 @@ function graph(data::Vector;
     )
     @assert margin >= 0 && margin < 0.35
     @assert w > 100 && h > 100
-    @assert offset >= 0 && offset < 10
+    @assert offset >= 0 && offset <= 10
     @assert any([style == s for (s, _) in styles])
-    
+
     margin *= h
     line_lenght = h - margin
 
@@ -40,7 +44,7 @@ function graph(data::Vector;
         if (x > w - margin)
             return
         end
-        
+
         # Compute the 2 points to draw the line
         top = h - (line_lenght * value)
         bottom, top = styles[style](h, line_lenght * value, top, margin)
@@ -48,7 +52,7 @@ function graph(data::Vector;
 
         # Draw the line
         line(Point(0, bottom), Point(0, top), :stroke)
-        
+
         # Moving the workspace to the right
         translate(offset, 0)
         x += offset
@@ -70,7 +74,7 @@ function draw_graph(w::Int, h::Int, data::Vector;
     Drawing(w, h, filename)
     background("white")
     sethue("gray20")
-    graph(format_data(data), w=gw, h=gh, style=:inverse)
+    graph(format_data(data), w=gw, h=gh, style=:center)
     finish()
 end
 

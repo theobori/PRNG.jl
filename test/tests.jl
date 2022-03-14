@@ -37,19 +37,36 @@ cd(_pwd)
         draw_graph(800, 200, data, filename="img/MT19937_" * string(i) * ext)
     end
 
-    @info "[Noise] Generating a graph with noise values"
+    @info "[Noise] Generating..."
 
     data = [noise(i) for i in range(1, 20, length=1000)]
     draw_graph(2000, 300, data, filename="img/noise" * ext)
 
+    @info "[Noise 2] Generating..."
 
-    @info "[Noise 2] Generating a graph with noise values"
-
-    data = [noise(i) for i in range(0, 6, length=300)]
+    data = [noise(i) for i in range(4, 60, length=600)]
     Drawing(800, 200, "img/noise2" * ext)
+    background("white")
+    sethue("blue")
+    graph(data, offset=10)
+    finish()
+
+
+    @info "[Noise 3] Generating..."
+
+    data = [noise(i) for i in range(6, 10, length=300)]
+    Drawing(800, 200, "img/noise3" * ext)
     background("black")
     sethue("white")
-    graph(data, style=:inverse)
+    graph(data, style=:inverse, offset=10)
+    finish()
+
+    @info "[Sinus] Generating..."
+    data = [cos(i) for i in range(1, 500, length=2000)]
+    Drawing(800, 200, "img/sin" * ext)
+    background("black")
+    sethue("blue")
+    graph(data, style=:center)
     finish()
 
 end
